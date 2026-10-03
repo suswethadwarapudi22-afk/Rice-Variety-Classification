@@ -1,0 +1,6 @@
+Feature_Count,Features,Accuracy,Precision,Recall,F1_Score
+7,"Perimeter, Major_Axis_Length, Area, Convex_Area, Eccentricity, Minor_Axis_Length, Extent",0.916010498687664,0.9160422920861007,0.916010498687664,0.9157931616014061
+6,"Perimeter, Major_Axis_Length, Area, Convex_Area, Eccentricity, Minor_Axis_Length",0.916010498687664,0.9160422920861007,0.916010498687664,0.9157931616014061
+5,"Perimeter, Major_Axis_Length, Area, Convex_Area, Eccentricity",0.9133858267716536,0.9133411312176544,0.9133858267716536,0.9132022716119096
+4,"Perimeter, Major_Axis_Length, Area, Convex_Area",0.910761154855643,0.9108451667900487,0.910761154855643,0.9104870925786867
+3,"Perimeter, Major_Axis_Length, Area",0.910761154855643,0.9108451667900487,0.910761154855643,0.9104870925786867

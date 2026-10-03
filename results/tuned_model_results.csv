@@ -1,0 +1,2 @@
+Model,Features,Accuracy,Precision,Recall,F1_Score
+Tuned Logistic Regression,6,0.916010498687664,0.9160422920861007,0.916010498687664,0.9157931616014061
