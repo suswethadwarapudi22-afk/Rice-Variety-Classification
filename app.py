@@ -5,36 +5,25 @@ from scipy.io import arff
 
 
 # ============================================================
-# LOAD DATASET
+# PAGE CONFIGURATION
 # ============================================================
 
-data, meta = arff.loadarff(
-    "data/Rice_Cammeo_Osmancik.arff"
-)
-
-df = pd.DataFrame(data)
-
-df["Class"] = df["Class"].str.decode("utf-8")
-
-
-# ============================================================
-# LOAD MODEL
-# ============================================================
-
-model = joblib.load(
-    "models/rice_classifier.joblib"
-)
-
-encoder = joblib.load(
-    "models/label_encoder.joblib"
+st.set_page_config(
+    page_title="Rice Variety Classification",
+    page_icon="🌾",
+    layout="wide"
 )
 
 
 # ============================================================
-# FEATURES
+# CONSTANTS
 # ============================================================
 
-features = [
+DATA_PATH = "data/Rice_Cammeo_Osmancik.arff"
+MODEL_PATH = "models/rice_classifier.joblib"
+ENCODER_PATH = "models/label_encoder.joblib"
+
+FEATURES = [
     "Perimeter",
     "Major_Axis_Length",
     "Area",
@@ -45,14 +34,65 @@ features = [
 
 
 # ============================================================
-# PAGE SETTINGS
+# LOAD DATASET
 # ============================================================
 
-st.set_page_config(
-    page_title="Rice Variety Classifier",
-    page_icon="🌾",
-    layout="centered"
-)
+@st.cache_data
+def load_dataset():
+
+    data, meta = arff.loadarff(DATA_PATH)
+
+    df = pd.DataFrame(data)
+
+    # Convert byte strings to normal strings
+    if df["Class"].dtype == object:
+        df["Class"] = df["Class"].apply(
+            lambda x: x.decode("utf-8")
+            if isinstance(x, bytes)
+            else x
+        )
+
+    return df
+
+
+# ============================================================
+# LOAD MODEL
+# ============================================================
+
+@st.cache_resource
+def load_model():
+
+    model = joblib.load(MODEL_PATH)
+
+    encoder = joblib.load(ENCODER_PATH)
+
+    return model, encoder
+
+
+# ============================================================
+# LOAD EVERYTHING
+# ============================================================
+
+try:
+
+    df = load_dataset()
+
+    model, encoder = load_model()
+
+except Exception as e:
+
+    st.error("❌ Unable to load the application files.")
+
+    st.code(str(e))
+
+    st.info(
+        "Make sure the following files exist in your GitHub repository:\n\n"
+        "data/Rice_Cammeo_Osmancik.arff\n"
+        "models/rice_classifier.joblib\n"
+        "models/label_encoder.joblib"
+    )
+
+    st.stop()
 
 
 # ============================================================
@@ -61,13 +101,17 @@ st.set_page_config(
 
 st.title("🌾 Rice Variety Classification")
 
-st.write(
-    "Predict whether a rice grain belongs to "
-    "**Cammeo** or **Osmancik** using physical measurements."
+st.markdown(
+    """
+    ### Machine Learning Based Rice Variety Prediction
+
+    This application predicts whether a rice grain belongs to
+    **Cammeo** or **Osmancik** using physical measurements of the grain.
+    """
 )
 
 st.info(
-    "The model uses six selected physical features "
+    "The final model uses six selected physical features "
     "and Logistic Regression."
 )
 
@@ -76,45 +120,91 @@ st.info(
 # SIDEBAR
 # ============================================================
 
-st.sidebar.header("Model Information")
+st.sidebar.title("📊 Model Information")
+
+st.sidebar.markdown(
+    """
+    **Algorithm:** Logistic Regression
+
+    **Number of Features:** 6
+
+    **C:** 10
+
+    **Solver:** liblinear
+
+    **Test Accuracy:** 91.60%
+
+    **Test F1 Score:** 91.58%
+    """
+)
+
+st.sidebar.divider()
+
+st.sidebar.subheader("Selected Features")
+
+for feature in FEATURES:
+    st.sidebar.write(f"• {feature}")
+
+st.sidebar.divider()
 
 st.sidebar.write(
-    "**Algorithm:** Logistic Regression"
+    f"📚 Dataset samples: **{len(df)}**"
 )
 
 st.sidebar.write(
-    "**Features:** 6"
+    "🌾 Classes: **Cammeo, Osmancik**"
 )
 
-st.sidebar.write(
-    "**C:** 10"
-)
 
-st.sidebar.write(
-    "**Solver:** liblinear"
-)
+# ============================================================
+# DATASET INFORMATION
+# ============================================================
 
-st.sidebar.write(
-    "**Test Accuracy:** 91.60%"
-)
+with st.expander("📚 Dataset Information"):
 
-st.sidebar.write(
-    "**Test F1 Score:** 91.58%"
-)
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric(
+            "Total Samples",
+            len(df)
+        )
+
+    with col2:
+        st.metric(
+            "Features",
+            7
+        )
+
+    with col3:
+        st.metric(
+            "Classes",
+            df["Class"].nunique()
+        )
+
+    st.write("### Class Distribution")
+
+    class_counts = df["Class"].value_counts()
+
+    st.dataframe(
+        class_counts.rename("Number of Samples"),
+        use_container_width=True
+    )
 
 
 # ============================================================
 # INPUT METHOD
 # ============================================================
 
-st.header("Select Input Method")
+st.header("🔍 Rice Variety Prediction")
 
 input_method = st.radio(
-    "Choose how you want to provide the rice measurements:",
+    "Choose an input method:",
     [
         "Use a real dataset sample",
         "Enter measurements manually"
-    ]
+    ],
+    horizontal=True
 )
 
 
@@ -124,7 +214,7 @@ input_method = st.radio(
 
 if input_method == "Use a real dataset sample":
 
-    st.subheader("🌾 Real Dataset Sample")
+    st.subheader("🌾 Predict a Real Dataset Sample")
 
     sample_number = st.number_input(
         "Select sample number",
@@ -134,14 +224,14 @@ if input_method == "Use a real dataset sample":
         step=1
     )
 
-    sample = df.iloc[sample_number - 1]
+    sample = df.iloc[int(sample_number) - 1]
 
     st.write("### Input Measurements")
 
     sample_input = pd.DataFrame(
         {
-            feature: [sample[feature]]
-            for feature in features
+            feature: [float(sample[feature])]
+            for feature in FEATURES
         }
     )
 
@@ -153,10 +243,13 @@ if input_method == "Use a real dataset sample":
     actual_class = sample["Class"]
 
     st.write(
-        f"Actual dataset class: **{actual_class}**"
+        f"**Actual Dataset Class:** `{actual_class}`"
     )
 
-    if st.button("🔍 Predict Selected Sample"):
+    if st.button(
+        "🔍 Predict Selected Sample",
+        type="primary"
+    ):
 
         prediction = model.predict(
             sample_input
@@ -172,23 +265,70 @@ if input_method == "Use a real dataset sample":
 
         confidence = max(probabilities) * 100
 
-        st.success(
-            f"🌾 Predicted Rice Variety: **{predicted_class}**"
-        )
+        st.divider()
 
-        st.metric(
-            "Prediction Confidence",
-            f"{confidence:.2f}%"
-        )
+        # ----------------------------------------------------
+        # RESULT
+        # ----------------------------------------------------
+
+        if predicted_class == actual_class:
+
+            st.success(
+                f"✅ Correct Prediction: **{predicted_class}**"
+            )
+
+        else:
+
+            st.error(
+                f"❌ Incorrect Prediction: **{predicted_class}**"
+            )
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+
+            st.metric(
+                "Actual Class",
+                actual_class
+            )
+
+        with col2:
+
+            st.metric(
+                "Predicted Class",
+                predicted_class
+            )
+
+        with col3:
+
+            st.metric(
+                "Confidence",
+                f"{confidence:.2f}%"
+            )
+
+        # ----------------------------------------------------
+        # PROBABILITIES
+        # ----------------------------------------------------
+
+        st.subheader("📊 Prediction Probabilities")
 
         probability_df = pd.DataFrame(
             {
                 "Rice Variety": encoder.classes_,
-                "Probability": probabilities * 100
+                "Probability (%)": probabilities * 100
             }
         )
 
-        st.subheader("Prediction Probabilities")
+        probability_df["Probability (%)"] = (
+            probability_df["Probability (%)"]
+            .round(2)
+        )
+
+        st.dataframe(
+            probability_df,
+            use_container_width=True,
+            hide_index=True
+        )
 
         st.bar_chart(
             probability_df.set_index(
@@ -206,13 +346,25 @@ else:
     st.subheader("✏️ Enter Rice Measurements")
 
     st.caption(
-        "Use values within the ranges of the original dataset."
+        "Enter values within the range of the original dataset."
     )
 
-    # Get realistic ranges from dataset
+    # ========================================================
+    # GET DATASET RANGES
+    # ========================================================
 
-    perimeter_min = float(df["Perimeter"].min())
-    perimeter_max = float(df["Perimeter"].max())
+    perimeter_min = float(
+        df["Perimeter"].min()
+    )
+
+    perimeter_max = float(
+        df["Perimeter"].max()
+    )
+
+    perimeter_median = float(
+        df["Perimeter"].median()
+    )
+
 
     major_axis_min = float(
         df["Major_Axis_Length"].min()
@@ -222,16 +374,36 @@ else:
         df["Major_Axis_Length"].max()
     )
 
-    area_min = float(df["Area"].min())
-    area_max = float(df["Area"].max())
+    major_axis_median = float(
+        df["Major_Axis_Length"].median()
+    )
 
-    convex_min = float(
+
+    area_min = float(
+        df["Area"].min()
+    )
+
+    area_max = float(
+        df["Area"].max()
+    )
+
+    area_median = float(
+        df["Area"].median()
+    )
+
+
+    convex_area_min = float(
         df["Convex_Area"].min()
     )
 
-    convex_max = float(
+    convex_area_max = float(
         df["Convex_Area"].max()
     )
+
+    convex_area_median = float(
+        df["Convex_Area"].median()
+    )
+
 
     eccentricity_min = float(
         df["Eccentricity"].min()
@@ -241,6 +413,11 @@ else:
         df["Eccentricity"].max()
     )
 
+    eccentricity_median = float(
+        df["Eccentricity"].median()
+    )
+
+
     minor_axis_min = float(
         df["Minor_Axis_Length"].min()
     )
@@ -249,70 +426,110 @@ else:
         df["Minor_Axis_Length"].max()
     )
 
-
-    # --------------------------------------------------------
-    # INPUTS
-    # --------------------------------------------------------
-
-    perimeter = st.number_input(
-        "Perimeter",
-        min_value=perimeter_min,
-        max_value=perimeter_max,
-        value=float(df["Perimeter"].median())
-    )
-
-    major_axis = st.number_input(
-        "Major Axis Length",
-        min_value=major_axis_min,
-        max_value=major_axis_max,
-        value=float(df["Major_Axis_Length"].median())
-    )
-
-    area = st.number_input(
-        "Area",
-        min_value=area_min,
-        max_value=area_max,
-        value=float(df["Area"].median())
-    )
-
-    convex_area = st.number_input(
-        "Convex Area",
-        min_value=convex_min,
-        max_value=convex_max,
-        value=float(df["Convex_Area"].median())
-    )
-
-    eccentricity = st.number_input(
-        "Eccentricity",
-        min_value=eccentricity_min,
-        max_value=eccentricity_max,
-        value=float(df["Eccentricity"].median())
-    )
-
-    minor_axis = st.number_input(
-        "Minor Axis Length",
-        min_value=minor_axis_min,
-        max_value=minor_axis_max,
-        value=float(df["Minor_Axis_Length"].median())
+    minor_axis_median = float(
+        df["Minor_Axis_Length"].median()
     )
 
 
-    # --------------------------------------------------------
+    # ========================================================
+    # INPUT COLUMNS
+    # ========================================================
+
+    col1, col2 = st.columns(2)
+
+
+    with col1:
+
+        perimeter = st.number_input(
+            "Perimeter",
+            min_value=perimeter_min,
+            max_value=perimeter_max,
+            value=perimeter_median,
+            step=0.01
+        )
+
+        major_axis = st.number_input(
+            "Major Axis Length",
+            min_value=major_axis_min,
+            max_value=major_axis_max,
+            value=major_axis_median,
+            step=0.01
+        )
+
+        area = st.number_input(
+            "Area",
+            min_value=area_min,
+            max_value=area_max,
+            value=area_median,
+            step=1.0
+        )
+
+
+    with col2:
+
+        convex_area = st.number_input(
+            "Convex Area",
+            min_value=convex_area_min,
+            max_value=convex_area_max,
+            value=convex_area_median,
+            step=1.0
+        )
+
+        eccentricity = st.number_input(
+            "Eccentricity",
+            min_value=eccentricity_min,
+            max_value=eccentricity_max,
+            value=eccentricity_median,
+            step=0.0001,
+            format="%.4f"
+        )
+
+        minor_axis = st.number_input(
+            "Minor Axis Length",
+            min_value=minor_axis_min,
+            max_value=minor_axis_max,
+            value=minor_axis_median,
+            step=0.01
+        )
+
+
+    # ========================================================
     # PREDICTION
-    # --------------------------------------------------------
+    # ========================================================
 
-    if st.button("🔍 Predict Rice Variety"):
+    if st.button(
+        "🔍 Predict Rice Variety",
+        type="primary"
+    ):
 
         input_data = pd.DataFrame(
             {
                 "Perimeter": [perimeter],
-                "Major_Axis_Length": [major_axis],
+
+                "Major_Axis_Length": [
+                    major_axis
+                ],
+
                 "Area": [area],
-                "Convex_Area": [convex_area],
-                "Eccentricity": [eccentricity],
-                "Minor_Axis_Length": [minor_axis]
+
+                "Convex_Area": [
+                    convex_area
+                ],
+
+                "Eccentricity": [
+                    eccentricity
+                ],
+
+                "Minor_Axis_Length": [
+                    minor_axis
+                ]
             }
         )
+
+
+        # ----------------------------------------------------
+        # MODEL PREDICTION
+        # ----------------------------------------------------
 
         prediction = model.predict(
             input_data
@@ -322,20 +539,28 @@ else:
             prediction
         )[0]
 
+
         probabilities = model.predict_proba(
             input_data
         )[0]
 
-        confidence = max(probabilities) * 100
+
+        confidence = (
+            max(probabilities) * 100
+        )
 
 
         # ----------------------------------------------------
-        # RESULT
+        # DISPLAY RESULT
         # ----------------------------------------------------
+
+        st.divider()
 
         st.success(
-            f"🌾 Predicted Rice Variety: **{predicted_class}**"
+            f"🌾 Predicted Rice Variety: "
+            f"**{predicted_class}**"
         )
+
 
         st.metric(
             "Prediction Confidence",
@@ -348,18 +573,49 @@ else:
         # ----------------------------------------------------
 
         st.subheader(
-            "Prediction Probabilities"
+            "📊 Prediction Probabilities"
         )
+
 
         probability_df = pd.DataFrame(
             {
                 "Rice Variety": encoder.classes_,
-                "Probability": probabilities * 100
+
+                "Probability (%)": (
+                    probabilities * 100
+                )
             }
         )
+
+
+        probability_df[
+            "Probability (%)"
+        ] = probability_df[
+            "Probability (%)"
+        ].round(2)
+
+
+        st.dataframe(
+            probability_df,
+            use_container_width=True,
+            hide_index=True
+        )
+
 
         st.bar_chart(
             probability_df.set_index(
                 "Rice Variety"
             )
         )
+
+
+# ============================================================
+# FOOTER
+# ============================================================
+
+st.divider()
+
+st.caption(
+    "Rice Variety Classification using Lightweight Machine Learning "
+    "| Logistic Regression"
+)
