@@ -13,36 +13,36 @@ df["Class"] = df["Class"].str.decode("utf-8")
 
 
 # Display first 5 rows
-print("FIRST 5 ROWS")
-print("=" * 50)
+print("FIRST 5 ROWS - 01_data_understanding.py:16")
+print("= - 01_data_understanding.py:17" * 50)
 print(df.head())
 
 
 # Display dataset shape
-print("\nDATASET SHAPE")
-print("=" * 50)
+print("\nDATASET SHAPE - 01_data_understanding.py:22")
+print("= - 01_data_understanding.py:23" * 50)
 print(df.shape)
 
 
 # Display column names
-print("\nCOLUMN NAMES")
-print("=" * 50)
+print("\nCOLUMN NAMES - 01_data_understanding.py:28")
+print("= - 01_data_understanding.py:29" * 50)
 print(df.columns.tolist())
 
 
 # Display data types
-print("\nDATA TYPES")
-print("=" * 50)
+print("\nDATA TYPES - 01_data_understanding.py:34")
+print("= - 01_data_understanding.py:35" * 50)
 print(df.dtypes)
 
 
 # Display class distribution
-print("\nCLASS DISTRIBUTION")
-print("=" * 50)
-print(df["Class"].value_counts())
+print("\nCLASS DISTRIBUTION - 01_data_understanding.py:40")
+print("= - 01_data_understanding.py:41" * 50)
+print(df["Class - 01_data_understanding.py:42"].value_counts())
 
 
 # Display missing values
-print("\nMISSING VALUES")
-print("=" * 50)
+print("\nMISSING VALUES - 01_data_understanding.py:46")
+print("= - 01_data_understanding.py:47" * 50)
 print(df.isnull().sum())

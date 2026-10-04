@@ -27,8 +27,8 @@ samples = df[features].sample(10, random_state=42)
 predictions = model.predict(samples)
 probabilities = model.predict_proba(samples)
 
-print("\nTESTING MODEL WITH REAL DATASET SAMPLES")
-print("=" * 70)
+print("\nTESTING MODEL WITH REAL DATASET SAMPLES - 12_test_predictions.py:30")
+print("= - 12_test_predictions.py:31" * 70)
 
 for i in range(len(samples)):
     predicted = encoder.inverse_transform([predictions[i]])[0]
@@ -36,12 +36,12 @@ for i in range(len(samples)):
 
     confidence = max(probabilities[i]) * 100
 
-    print(f"\nSample {i + 1}")
-    print("-" * 40)
+    print(f"\nSample {i + 1} - 12_test_predictions.py:39")
+    print("" * 40)
 
     for feature in features:
-        print(f"{feature:22}: {samples.iloc[i][feature]:.4f}")
+        print(f"{feature:22}: {samples.iloc[i][feature]:.4f} - 12_test_predictions.py:43")
 
-    print(f"Actual Class          : {actual}")
-    print(f"Predicted Class       : {predicted}")
-    print(f"Confidence            : {confidence:.2f}%")
+    print(f"Actual Class          : {actual} - 12_test_predictions.py:45")
+    print(f"Predicted Class       : {predicted} - 12_test_predictions.py:46")
+    print(f"Confidence            : {confidence:.2f}% - 12_test_predictions.py:47")

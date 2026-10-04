@@ -49,12 +49,12 @@ label_encoder = LabelEncoder()
 y = label_encoder.fit_transform(y)
 
 
-print("Class Mapping:")
+print("Class Mapping: - 05_baseline_model.py:52")
 for class_name, encoded_value in zip(
     label_encoder.classes_,
     label_encoder.transform(label_encoder.classes_)
 ):
-    print(class_name, "=", encoded_value)
+    print(class_name, "= - 05_baseline_model.py:57", encoded_value)
 
 
 # ==========================================
@@ -131,21 +131,21 @@ f1 = f1_score(
 )
 
 
-print("\nBASELINE MODEL RESULTS")
-print("=" * 60)
+print("\nBASELINE MODEL RESULTS - 05_baseline_model.py:134")
+print("= - 05_baseline_model.py:135" * 60)
 
-print(f"Accuracy  : {accuracy:.4f}")
-print(f"Precision : {precision:.4f}")
-print(f"Recall    : {recall:.4f}")
-print(f"F1 Score  : {f1:.4f}")
+print(f"Accuracy  : {accuracy:.4f} - 05_baseline_model.py:137")
+print(f"Precision : {precision:.4f} - 05_baseline_model.py:138")
+print(f"Recall    : {recall:.4f} - 05_baseline_model.py:139")
+print(f"F1 Score  : {f1:.4f} - 05_baseline_model.py:140")
 
 
 # ==========================================
 # 9. CLASSIFICATION REPORT
 # ==========================================
 
-print("\nCLASSIFICATION REPORT")
-print("=" * 60)
+print("\nCLASSIFICATION REPORT - 05_baseline_model.py:147")
+print("= - 05_baseline_model.py:148" * 60)
 
 print(
     classification_report(
@@ -165,7 +165,7 @@ cm = confusion_matrix(
     y_pred
 )
 
-print("\nCONFUSION MATRIX")
-print("=" * 60)
+print("\nCONFUSION MATRIX - 05_baseline_model.py:168")
+print("= - 05_baseline_model.py:169" * 60)
 
 print(cm)

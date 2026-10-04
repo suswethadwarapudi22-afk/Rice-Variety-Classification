@@ -178,8 +178,8 @@ for name, model in models.items():
 results_df = pd.DataFrame(results)
 
 
-print("\nMODEL COMPARISON")
-print("=" * 80)
+print("\nMODEL COMPARISON - 06_model_comparison.py:181")
+print("= - 06_model_comparison.py:182" * 80)
 
 print(
     results_df.to_string(
@@ -204,5 +204,5 @@ results_df.to_csv(
 )
 
 
-print("\nResults saved to:")
-print("results/model_comparison.csv")
+print("\nResults saved to: - 06_model_comparison.py:207")
+print("results/model_comparison.csv - 06_model_comparison.py:208")

@@ -144,7 +144,7 @@ grid_search = GridSearchCV(
 )
 
 
-print("Starting hyperparameter tuning...")
+print("Starting hyperparameter tuning... - 09_hyperparameter_tuning.py:147")
 
 grid_search.fit(
     X_train,
@@ -156,16 +156,16 @@ grid_search.fit(
 # 9. BEST PARAMETERS
 # ==========================================
 
-print("\nBEST PARAMETERS")
-print("=" * 60)
+print("\nBEST PARAMETERS - 09_hyperparameter_tuning.py:159")
+print("= - 09_hyperparameter_tuning.py:160" * 60)
 
 print(
     grid_search.best_params_
 )
 
 
-print("\nBEST CROSS-VALIDATION F1 SCORE")
-print("=" * 60)
+print("\nBEST CROSSVALIDATION F1 SCORE - 09_hyperparameter_tuning.py:167")
+print("= - 09_hyperparameter_tuning.py:168" * 60)
 
 print(
     f"{grid_search.best_score_:.4f}"
@@ -207,8 +207,8 @@ f1 = f1_score(
 )
 
 
-print("\nTUNED MODEL TEST RESULTS")
-print("=" * 60)
+print("\nTUNED MODEL TEST RESULTS - 09_hyperparameter_tuning.py:210")
+print("= - 09_hyperparameter_tuning.py:211" * 60)
 
 print(
     f"Accuracy  : {accuracy:.4f}"
@@ -231,8 +231,8 @@ print(
 # 11. CLASSIFICATION REPORT
 # ==========================================
 
-print("\nCLASSIFICATION REPORT")
-print("=" * 60)
+print("\nCLASSIFICATION REPORT - 09_hyperparameter_tuning.py:234")
+print("= - 09_hyperparameter_tuning.py:235" * 60)
 
 print(
     classification_report(
@@ -281,7 +281,7 @@ results.to_csv(
 )
 
 
-print("\nResults saved to:")
+print("\nResults saved to: - 09_hyperparameter_tuning.py:284")
 print(
     "results/tuned_model_results.csv"
 )

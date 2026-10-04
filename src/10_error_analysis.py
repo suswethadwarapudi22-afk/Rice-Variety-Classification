@@ -60,8 +60,8 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
 # Classification report
-print("\nCLASSIFICATION REPORT")
-print("=" * 60)
+print("\nCLASSIFICATION REPORT - 10_error_analysis.py:63")
+print("= - 10_error_analysis.py:64" * 60)
 
 print(
     classification_report(
@@ -74,18 +74,18 @@ print(
 # Confusion matrix
 cm = confusion_matrix(y_test, y_pred)
 
-print("\nCONFUSION MATRIX")
-print("=" * 60)
+print("\nCONFUSION MATRIX - 10_error_analysis.py:77")
+print("= - 10_error_analysis.py:78" * 60)
 print(cm)
 
 # Number of errors
 errors = y_test != y_pred
 
-print("\nERROR ANALYSIS")
-print("=" * 60)
-print("Total test samples :", len(y_test))
-print("Correct predictions:", sum(~errors))
-print("Incorrect predictions:", sum(errors))
+print("\nERROR ANALYSIS - 10_error_analysis.py:84")
+print("= - 10_error_analysis.py:85" * 60)
+print("Total test samples : - 10_error_analysis.py:86", len(y_test))
+print("Correct predictions: - 10_error_analysis.py:87", sum(~errors))
+print("Incorrect predictions: - 10_error_analysis.py:88", sum(errors))
 
 # Create error dataframe
 error_df = X_test.copy()
@@ -101,8 +101,8 @@ error_df.to_csv(
     index=False
 )
 
-print("\nMisclassified samples saved to:")
-print("results/misclassified_samples.csv")
+print("\nMisclassified samples saved to: - 10_error_analysis.py:104")
+print("results/misclassified_samples.csv - 10_error_analysis.py:105")
 
 # Save confusion matrix
 plt.figure(figsize=(6, 5))
@@ -128,5 +128,5 @@ plt.savefig(
 
 plt.close()
 
-print("\nConfusion matrix saved to:")
-print("results/tuned_confusion_matrix.png")
+print("\nConfusion matrix saved to: - 10_error_analysis.py:131")
+print("results/tuned_confusion_matrix.png - 10_error_analysis.py:132")
